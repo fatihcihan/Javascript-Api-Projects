@@ -17,9 +17,28 @@ fetch(url + "/codes")
         const items = data.supported_codes;
         let options;
         for (let item of items) {
-            console.log(item);
             options += `<option value=${item[0]}>${item[1]}</option>`
         }
         list_one.innerHTML = options;
         list_two.innerHTML = options;
-    })
+    });
+
+calculate.addEventListener("click", function () {
+    // currencyOne -> base
+    const currencyOne = currency_one.value;
+    const currencyTwo = currency_two.value;
+    const quantity = amount.value;
+
+    fetch(url + "/latest/" + currencyOne)
+        .then(res => res.json())
+        .then(data => {
+            const calculatedValue = (data.conversion_rates[currencyTwo] * quantity).toFixed(3);
+            result.innerHTML = `
+                <div class="card border-primary">
+                    <div class="card-body text-center" style="font-size:30px;">
+                       ${quantity} ${currencyOne} = ${calculatedValue} ${currencyTwo}
+                    </div>
+                </div> 
+            `;
+        })
+})
