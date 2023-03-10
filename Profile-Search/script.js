@@ -3,6 +3,7 @@ const toLanguage = document.querySelector("#to-lang");
 const btnTranslate = document.querySelector("#btnTranslate");
 const fromText = document.querySelector("#from-text");
 const toText = document.querySelector("#to-text");
+const exchange = document.querySelector(".exchange");
 
 
 for (let language in languages) {
@@ -27,3 +28,12 @@ btnTranslate.addEventListener("click", () => {
 })
 
 
+exchange.addEventListener("click", () => {
+    let text = fromText.value;
+    fromText.value = toText.value;
+    toText.value = text;
+
+    let language = fromLanguage.value;
+    fromLanguage.value = toLanguage.value;
+    toLanguage.value = language;
+});
