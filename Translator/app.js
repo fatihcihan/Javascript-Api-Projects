@@ -13,7 +13,11 @@ searchProfile.addEventListener("keyup", (event) => {
                     ui.showAlert(text);
                 } else {
                     ui.showProfile(res.profile[0]);
+                    ui.showTodo(res.todo)
                 }
+            })
+            .catch(err => {
+                ui.showAlert(text);
             })
     }
 })
