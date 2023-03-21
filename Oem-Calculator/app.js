@@ -30,6 +30,17 @@ const ProductController = (function () {
         getData: function () {
             return data;
         },
+        getProductById: function (productId) {
+            let product = null;
+
+            data.products.forEach(function (prd) {
+                if (prd.id == productId) {
+                    product = prd;
+                }
+            })
+
+            return product;
+        },
         addProduct: function (name, price) {
             let id;
 
@@ -84,10 +95,8 @@ const UIController = (function () {
                     <td>${product.id}</td>
                     <td>${product.name}</td>
                     <td>${product.price} $</td>
-                    <td class="text-right">
-                        <button type="submit" class="btn btn-warning btn-sm">
-                            <i class="far fa-edit"></i>
-                        </button>
+                    <td class="text-right">                       
+                        <i class="far fa-edit edit-product"></i>                       
                     </td>
                 </tr>
                 `;
@@ -106,9 +115,7 @@ const UIController = (function () {
                     <td>${product.name}</td>
                     <td>${product.price} $</td>
                     <td class="text-right">
-                        <button type="submit" class="btn btn-warning btn-sm">
-                            <i class="far fa-edit"></i>
-                        </button>
+                        <i class="far fa-edit edit-product"></i>  
                     </td>
                 </tr>
             `;
@@ -143,6 +150,8 @@ const App = (function (ProductCtrl, UICtrl) {
     const loadEventListeners = function () {
         // add product event
         document.querySelector(UiSelectorors.addButton).addEventListener('click', productAddSubmit);
+        // edit product event
+        document.querySelector(UiSelectorors.productList).addEventListener('click', productEditSubmit)
     }
 
     const productAddSubmit = function (event) {
@@ -167,6 +176,20 @@ const App = (function (ProductCtrl, UICtrl) {
 
         event.preventDefault();
     }
+
+    const productEditSubmit = function (event) {
+        if (event.target.classList.contains('edit-product')) {
+
+            const productId = event.target.parentNode.previousElementSibling.previousElementSibling.previousElementSibling.textContent;
+
+            // get selected product
+            const product = ProductController.getProductById(productId);
+            console.log(product);
+
+        }
+        event.preventDefault();
+    }
+
 
     return {
         init: function () {
