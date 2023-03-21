@@ -17,12 +17,7 @@ const ProductController = (function () {
     }
 
     const data = {
-        products: [
-            { id: 0, name: 'Monitor', price: 200 },
-            { id: 1, name: 'Ram', price: 500 },
-            { id: 2, name: 'Mouse', price: 100 },
-            { id: 3, name: 'Keyboard', price: 150 }
-        ],
+        products: [],
         selectedProduct: null,
         totalPrice: 0
     }
@@ -34,6 +29,19 @@ const ProductController = (function () {
         },
         getData: function () {
             return data;
+        },
+        addProduct: function (name, price) {
+            let id;
+
+            if (data.products.length > 0) {
+                id = data.products[data.products.length - 1].id + 1;
+            } else {
+                id = 0;
+            }
+
+            const newProduct = new Product(id, name, price);
+            data.products.push(newProduct);
+            return newProduct;
         }
     }
 
@@ -47,7 +55,11 @@ const ProductController = (function () {
 const UIController = (function () {
 
     const Selectors = {
-        productList: "#item-list"
+        productList: "#item-list",
+        addButton: ".addBtn",
+        productName: '#productName',
+        productPrice: '#productPrice',
+        productCard: '#productCard'
     }
 
     return {
@@ -65,7 +77,7 @@ const UIController = (function () {
                             <i class="far fa-edit"></i>
                         </button>
                     </td>
-                 </tr>
+                </tr>
                 `;
             });
 
@@ -73,6 +85,30 @@ const UIController = (function () {
         },
         getSelectors: function () {
             return Selectors;
+        },
+        addProduct: function (product) {
+            document.querySelector(Selectors.productCard).style.display = 'block';
+            var item = `
+                <tr>
+                    <td>${product.id}</td>
+                    <td>${product.name}</td>
+                    <td>${product.price} $</td>
+                    <td class="text-right">
+                        <button type="submit" class="btn btn-warning btn-sm">
+                            <i class="far fa-edit"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+
+            document.querySelector(Selectors.productList).innerHTML += item;
+        },
+        clearInputs: function () {
+            document.querySelector(Selectors.productName).value = '';
+            document.querySelector(Selectors.productPrice).value = '';
+        },
+        hideCard: function () {
+            document.querySelector(Selectors.productCard).style.display = 'none';
         }
     }
 })();
@@ -83,12 +119,46 @@ const UIController = (function () {
 
 // App Controller
 const App = (function (ProductCtrl, UICtrl) {
+
+    const UiSelectorors = UIController.getSelectors();
+
+    // Load event listeners
+    const loadEventListeners = function () {
+        // add product event
+        document.querySelector(UiSelectorors.addButton).addEventListener('click', productAddSubmit);
+    }
+
+    const productAddSubmit = function (event) {
+        const productName = document.querySelector(UiSelectorors.productName).value;
+        const productPrice = document.querySelector(UiSelectorors.productPrice).value;
+
+        if (productName !== '' && productPrice !== '') {
+            // add product
+            const newProduct = ProductController.addProduct(productName, parseFloat(productPrice));
+            UIController.addProduct(newProduct);
+            // clear inputs
+            UIController.clearInputs();
+        }
+
+
+        console.log(productName);
+        console.log(productPrice);
+        event.preventDefault();
+    }
+
     return {
         init: function () {
             console.log('starting app');
             const products = ProductCtrl.getProdcuts();
 
-            UIController.createProductList(products);
+            if (products.length == 0) {
+                UIController.hideCard();
+            } else {
+                UIController.createProductList(products);
+            }
+
+            // Load event listeners
+            loadEventListeners();
         }
     }
 })(ProductController, UIController);
