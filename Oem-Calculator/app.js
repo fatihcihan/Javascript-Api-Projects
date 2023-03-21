@@ -20,7 +20,8 @@ const ProductController = (function () {
         products: [
             { id: 0, name: 'Monitor', price: 200 },
             { id: 1, name: 'Ram', price: 500 },
-            { id: 2, name: 'Mouse', price: 100 }
+            { id: 2, name: 'Mouse', price: 100 },
+            { id: 3, name: 'Keyboard', price: 150 }
         ],
         selectedProduct: null,
         totalPrice: 0
@@ -45,6 +46,35 @@ const ProductController = (function () {
 // UI Controller
 const UIController = (function () {
 
+    const Selectors = {
+        productList: "#item-list"
+    }
+
+    return {
+        createProductList: function (products) {
+            let html = '';
+
+            products.forEach(product => {
+                html += `
+                <tr>
+                    <td>${product.id}</td>
+                    <td>${product.name}</td>
+                    <td>${product.price} $</td>
+                    <td class="text-right">
+                        <button type="submit" class="btn btn-warning btn-sm">
+                            <i class="far fa-edit"></i>
+                        </button>
+                    </td>
+                 </tr>
+                `;
+            });
+
+            document.querySelector(Selectors.productList).innerHTML = html;
+        },
+        getSelectors: function () {
+            return Selectors;
+        }
+    }
 })();
 
 
