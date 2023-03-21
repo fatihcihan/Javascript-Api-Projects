@@ -42,6 +42,16 @@ const ProductController = (function () {
             const newProduct = new Product(id, name, price);
             data.products.push(newProduct);
             return newProduct;
+        },
+        getTotal: function () {
+            let total = 0;
+
+            data.products.forEach(function (product) {
+                total += product.price;
+            })
+
+            data.totalPrice = total;
+            return data.totalPrice;
         }
     }
 
@@ -59,7 +69,9 @@ const UIController = (function () {
         addButton: ".addBtn",
         productName: '#productName',
         productPrice: '#productPrice',
-        productCard: '#productCard'
+        productCard: '#productCard',
+        totalTl: '#total-tl',
+        totalUsd: '#total-usd'
     }
 
     return {
@@ -109,6 +121,11 @@ const UIController = (function () {
         },
         hideCard: function () {
             document.querySelector(Selectors.productCard).style.display = 'none';
+        },
+        showTotal: function (total) {
+            document.querySelector(Selectors.totalUsd).textContent = total;
+            document.querySelector(Selectors.totalTl).textContent = total * 20;
+
         }
     }
 })();
@@ -136,13 +153,18 @@ const App = (function (ProductCtrl, UICtrl) {
             // add product
             const newProduct = ProductController.addProduct(productName, parseFloat(productPrice));
             UIController.addProduct(newProduct);
+
+            // get total
+            const total = ProductController.getTotal();
+            console.log(total);
+
+            // show total
+            UIController.showTotal(total);
+
             // clear inputs
             UIController.clearInputs();
         }
 
-
-        console.log(productName);
-        console.log(productPrice);
         event.preventDefault();
     }
 
