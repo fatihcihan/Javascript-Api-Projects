@@ -41,6 +41,12 @@ const ProductController = (function () {
 
             return product;
         },
+        setCurrentProduct: function (product) {
+            data.selectedProduct = product;
+        },
+        getCurrentProduct: function () {
+            return data.selectedProduct;
+        },
         addProduct: function (name, price) {
             let id;
 
@@ -132,7 +138,11 @@ const UIController = (function () {
         showTotal: function (total) {
             document.querySelector(Selectors.totalUsd).textContent = total;
             document.querySelector(Selectors.totalTl).textContent = total * 20;
-
+        },
+        addProductToForm: function () {
+            const selectedProduct = ProductController.getCurrentProduct();
+            document.querySelector(Selectors.productName).value = selectedProduct.name;
+            document.querySelector(Selectors.productPrice).value = selectedProduct.price;
         }
     }
 })();
@@ -185,6 +195,12 @@ const App = (function (ProductCtrl, UICtrl) {
             // get selected product
             const product = ProductController.getProductById(productId);
             console.log(product);
+
+            // set current product
+            ProductController.setCurrentProduct(product);
+
+            // add product to UI
+            UIController.addProductToForm();
 
         }
         event.preventDefault();
