@@ -161,6 +161,14 @@ const UIController = (function () {
             document.querySelector(Selectors.productName).value = '';
             document.querySelector(Selectors.productPrice).value = '';
         },
+        clearWarnings: function () {
+            let items = document.querySelectorAll(Selectors.productListItems);
+            items.forEach(function (item) {
+                if (item.classList.contains('bg-warning')) {
+                    item.classList.remove('bg-warning')
+                }
+            })
+        },
         hideCard: function () {
             document.querySelector(Selectors.productCard).style.display = 'none';
         },
@@ -174,6 +182,7 @@ const UIController = (function () {
             document.querySelector(Selectors.productPrice).value = selectedProduct.price;
         },
         addingState: function (item) {
+            UIController.clearWarnings();
             if (item) {
                 item.classList.remove('bg-warning');
             }
@@ -183,13 +192,7 @@ const UIController = (function () {
             document.querySelector(Selectors.deleteButton).style.display = 'none';
             document.querySelector(Selectors.cancelButton).style.display = 'none';
         },
-        editState: function (tr) {
-
-            const parent = tr.parentNode;
-            for (let i = 0; i < parent.children.length; i++) {
-                parent.children[i].classList.remove('bg-warning');
-            }
-
+        editState: function (tr) {          
             tr.classList.add('bg-warning');
             document.querySelector(Selectors.addButton).style.display = 'none';
             document.querySelector(Selectors.updateButton).style.display = 'inline';
@@ -206,23 +209,24 @@ const UIController = (function () {
 // App Controller
 const App = (function (ProductCtrl, UICtrl) {
 
-    const UiSelectorors = UICtrl.getSelectors();
+    const UiSelectors = UICtrl.getSelectors();
 
     // Load event listeners
     const loadEventListeners = function () {
         // add product event
-        document.querySelector(UiSelectorors.addButton).addEventListener('click', productAddSubmit);
+        document.querySelector(UiSelectors.addButton).addEventListener('click', productAddSubmit);
         // edit product click
-        document.querySelector(UiSelectorors.productList).addEventListener('click', productEditClick);
+        document.querySelector(UiSelectors.productList).addEventListener('click', productEditClick);
         // edit product subtmit
-        document.querySelector(UiSelectorors.updateButton).addEventListener('click', editProductSubmit);
-
+        document.querySelector(UiSelectors.updateButton).addEventListener('click', editProductSubmit);
+        // cancel button click
+        document.querySelector(UiSelectors.cancelButton).addEventListener('click', cancelUpdate);
 
     }
 
     const productAddSubmit = function (event) {
-        const productName = document.querySelector(UiSelectorors.productName).value;
-        const productPrice = document.querySelector(UiSelectorors.productPrice).value;
+        const productName = document.querySelector(UiSelectors.productName).value;
+        const productPrice = document.querySelector(UiSelectors.productPrice).value;
 
         if (productName !== '' && productPrice !== '') {
             // add product
@@ -276,8 +280,14 @@ const App = (function (ProductCtrl, UICtrl) {
             const total = ProductCtrl.getTotal();
             // show total
             UIController.showTotal(total);
-            UIController.addingState(item);
+            UIController.addingState();
         }
+        event.preventDefault();
+    }
+
+    const cancelUpdate = function (event) {
+        UIController.addingState();
+        UIController.clearWarnings();
         event.preventDefault();
     }
     return {
