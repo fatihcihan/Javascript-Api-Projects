@@ -21,6 +21,24 @@ const StorageController = (function () {
                 products = JSON.parse(localStorage.getItem('products'));
             }
             return products;
+        },
+        updateProduct: function (product) {
+            let products = JSON.parse(localStorage.getItem('products'));
+            products.forEach(function (prd, index) {
+                if (product.id == prd.id) {
+                    products.splice(index, 1, product);
+                }
+            });
+            localStorage.setItem('products', JSON.stringify(products));
+        },
+        deleteProduct: function (id) {
+            let products = JSON.parse(localStorage.getItem('products'));
+            products.forEach(function (prd, index) {
+                if (id == prd.id) {
+                    products.splice(index, 1);
+                }
+            });
+            localStorage.setItem('products', JSON.stringify(products));
         }
     }
 
@@ -320,8 +338,8 @@ const App = (function (ProductCtrl, UICtrl, StorageCtrl) {
     }
 
     const editProductSubmit = function (event) {
-        const productName = document.querySelector(UiSelectorors.productName).value;
-        const productPrice = document.querySelector(UiSelectorors.productPrice).value;
+        const productName = document.querySelector(UiSelectors.productName).value;
+        const productPrice = document.querySelector(UiSelectors.productPrice).value;
         if (productName !== '' && productPrice !== '') {
             // update product
             const updatedProduct = ProductCtrl.updateProduct(productName, productPrice);
@@ -331,6 +349,8 @@ const App = (function (ProductCtrl, UICtrl, StorageCtrl) {
             const total = ProductCtrl.getTotal();
             // show total
             UIController.showTotal(total);
+            // update storage
+            StorageController.updateProduct(updatedProduct);
             UIController.addingState();
         }
         event.preventDefault();
@@ -353,6 +373,10 @@ const App = (function (ProductCtrl, UICtrl, StorageCtrl) {
         const total = ProductCtrl.getTotal();
         // show total
         UIController.showTotal(total);
+
+        // delete from storage
+        StorageCtrl.deleteProduct(selectedProduct.id);
+
         UIController.addingState();
         if (total == 0) {
             UIController.hideCard();
